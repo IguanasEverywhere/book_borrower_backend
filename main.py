@@ -1,6 +1,6 @@
-from typing import List, Union
+from typing import List
 from contextlib import asynccontextmanager
-from fastapi import Depends, FastAPI, HTTPException, Query
+from fastapi import Depends, FastAPI, HTTPException
 from sqlmodel import Field, Session, SQLModel, create_engine, Relationship, select
 from typing_extensions import Annotated, Optional
 from datetime import datetime
@@ -38,13 +38,19 @@ class User(SQLModel, table=True):
     first_name: str = Field(default=None)
     last_name: str = Field (default=None)
 
-    books_owned: List["Book"] = Relationship(back_populates="owner")
-    books_reviewed: List["Book_Review"] = Relationship(back_populates="book_reviewer")
+    books_owned: Optional[List["Book"]] = Relationship(back_populates="owner")
+    books_reviewed: Optional[List["Book_Review"]] = Relationship(back_populates="book_reviewer")
 
-    reviews_by_user: List["User_Review"] = Relationship(back_populates="user_reviews")
-    reviews_of_user: List["User_Review"] = Relationship(back_populates="reviewee")
+    reviews_by_user: Optional[List["User_Review"]] = Relationship(
+        back_populates="user_reviews",
+        sa_relationship_kwargs={'foreign_keys': 'User_Review.reviewer_id'}
+        )
+    reviews_of_user: Optional[List["User_Review"]] = Relationship(
+        back_populates="reviewee",
+        sa_relationship_kwargs={'foreign_keys': 'User_Review.reviewer_id'}
+        )
 
-    borrow_history: List["Borrow"] = Relationship(back_populates="borrower")
+    borrow_history: Optional[List["Borrow"]] = Relationship(back_populates="borrower")
 
 
 class Book(SQLModel, table=True):
@@ -75,7 +81,7 @@ class Book_Review(SQLModel, table=True):
     book: "Book" = Relationship(back_populates="reviews")
 
     reviewer_id: int = Field(foreign_key="users.id")
-    reviewer: "User" = Relationship(back_populates="books_reviewed")
+    book_reviewer: "User" = Relationship(back_populates="books_reviewed")
 
 class User_Review(SQLModel, table=True):
     __tablename__ = "user_reviews"
@@ -85,10 +91,16 @@ class User_Review(SQLModel, table=True):
     body: str = Field(default=None)
 
     reviewer_id: int = Field(foreign_key="users.id")
-    user_reviews: "User" = Relationship(back_populates="reviews_by_user")
+    user_reviews: "User" = Relationship(
+        back_populates="reviews_by_user",
+        sa_relationship_kwargs={'foreign_keys': '[User_Review.reviewer_id]'}
+        )
 
     reviewee_id: int = Field(foreign_key="users.id")
-    reviewee: "User" = Relationship(back_populates="reviews_of_user")
+    reviewee: "User" = Relationship(
+        back_populates="reviews_of_user",
+        sa_relationship_kwargs={'foreign_keys': '[User_Review.reviewee_id]'}
+        )
 
 class Borrow(SQLModel, table=True):
     __tablename__="borrows"
@@ -101,6 +113,65 @@ class Borrow(SQLModel, table=True):
 
     borrower_id: int = Field(foreign_key="users.id")
     borrower: "User" = Relationship(back_populates="borrow_history")
+
+
+@app.post("/api/users")
+def add_user(user: User, session: SessionDep) -> User:
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+    return user
+
+@app.get("/api/users")
+def get_users(session: SessionDep) -> List[User]:
+    all_users = session.exec(select(User)).all()
+    return all_users
+
+@app.get("/api/users/{user_id}")
+def get_user(user_id: int, session: SessionDep) -> User:
+    user = session.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+@app.post("/api/books")
+def add_book(book: Book, session: SessionDep) -> Book:
+    session.add(book)
+    session.commit()
+    session.refresh(book)
+    return book
+
+@app.get("/api/books/{book_id}")
+def get_book(book_id: int, session: SessionDep) -> Book:
+    book = session.get(Book, book_id)
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found")
+    return book
+
+@app.post("/api/book-reviews/")
+def add_review(book_review: Book_Review, session: SessionDep) -> Book_Review:
+    session.add(book_review)
+    session.commit()
+    session.refresh(book_review)
+    return book_review
+
+
+@app.post("/api/user-reviews/")
+def add_user_review(user_review: User_Review, session: SessionDep) -> User_Review:
+    session.add(user_review)
+    session.commit()
+    session.refresh(user_review)
+    return user_review
+
+@app.post("/api/borrows/")
+def add_borrow(borrow: Borrow, session: SessionDep) -> Borrow:
+    session.add(borrow)
+    session.commit()
+    session.refresh(borrow)
+    return borrow
+
+
+
 
 
 @app.get("/")

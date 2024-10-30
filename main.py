@@ -4,6 +4,10 @@ from fastapi import Depends, FastAPI, HTTPException
 from sqlmodel import Session, SQLModel, create_engine, select
 from typing_extensions import Annotated
 from models import User, Book, Book_Review, User_Review, Borrow
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
 
@@ -12,11 +16,15 @@ async def lifespan(app: FastAPI):
     create_db_and_tables()
     yield
 
-sqlite_file_name = "database.db"
-sqlite_url = f"sqlite:///{sqlite_file_name}"
+rds_postgres_url = os.getenv("AWS_POSTGRES_RDS_URL")
 
-connect_args = {"check_same_thread": False}
-engine = create_engine(sqlite_url, connect_args=connect_args)
+# for SQLite connection and testing
+# sqlite_file_name = "database.db"
+# sqlite_url = f"sqlite:///{sqlite_file_name}"
+# connect_args = {"check_same_thread": False}
+# engine = create_engine(rds_postgres_url, connect_args=connect_args, echo=True)
+
+engine = create_engine(rds_postgres_url, echo=True)
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)

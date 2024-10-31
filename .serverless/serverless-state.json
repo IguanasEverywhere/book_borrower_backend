@@ -107,7 +107,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-us-east-2-84cbd317-02bb",
-                "S3Key": "serverless/book-library-api/dev/1730393661255-2024-10-31T16:54:21.255Z/book-library-api.zip"
+                "S3Key": "serverless/book-library-api/dev/1730398599209-2024-10-31T18:16:39.209Z/book-library-api.zip"
               },
               "Handler": "main.handler",
               "Runtime": "python3.8",
@@ -131,14 +131,14 @@
               "AppLogGroup"
             ]
           },
-          "AppLambdaVersion69PlEuCRQQIxOxeiIf7mNebxaaSRVwdMbcU7cHrtVE": {
+          "AppLambdaVersionoAuzpJY2UzBMCsERil9P6bAyChiZfmj7xYc9vFqm3Q": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "AppLambdaFunction"
               },
-              "CodeSha256": "Iyryy6OvWMJzYnlHu+Hzqyn65qMtbtHv4kI70BqXW+c="
+              "CodeSha256": "7hf3wU+VQ2r7KXDtjz1rWrZrfd//wc/mxT1C7Jna1co="
             }
           },
           "ApiGatewayRestApi": {
@@ -263,7 +263,7 @@
               "AppLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1730393646509": {
+          "ApiGatewayDeployment1730398582932": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -324,7 +324,7 @@
           "AppLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "AppLambdaVersion69PlEuCRQQIxOxeiIf7mNebxaaSRVwdMbcU7cHrtVE"
+              "Ref": "AppLambdaVersionoAuzpJY2UzBMCsERil9P6bAyChiZfmj7xYc9vFqm3Q"
             },
             "Export": {
               "Name": "sls-book-library-api-dev-AppLambdaFunctionQualifiedArn"
@@ -390,7 +390,7 @@
         "timeout": 6,
         "runtime": "python3.8",
         "vpc": {},
-        "versionLogicalId": "AppLambdaVersion69PlEuCRQQIxOxeiIf7mNebxaaSRVwdMbcU7cHrtVE"
+        "versionLogicalId": "AppLambdaVersionoAuzpJY2UzBMCsERil9P6bAyChiZfmj7xYc9vFqm3Q"
       }
     },
     "configValidationMode": "warn",
@@ -416,7 +416,7 @@
         "artifactsS3KeyDirname": "serverless/book-library-api/dev/code-artifacts",
         "deploymentBucket": "serverless-framework-deployments-us-east-2-84cbd317-02bb",
         "artifact": "/Users/scottschwab/Development/book_borrower_backend/.serverless/book-library-api.zip",
-        "artifactDirectoryName": "serverless/book-library-api/dev/1730393661255-2024-10-31T16:54:21.255Z"
+        "artifactDirectoryName": "serverless/book-library-api/dev/1730398599209-2024-10-31T18:16:39.209Z"
       }
     },
     "appId": null,
@@ -425,7 +425,7 @@
     "artifact": "/Users/scottschwab/Development/book_borrower_backend/.serverless/book-library-api.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/book-library-api/dev/1730393661255-2024-10-31T16:54:21.255Z",
+    "artifactDirectoryName": "serverless/book-library-api/dev/1730398599209-2024-10-31T18:16:39.209Z",
     "artifact": "book-library-api.zip"
   }
 }

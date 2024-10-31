@@ -6,10 +6,13 @@ from typing_extensions import Annotated
 from models import User, Book, Book_Review, User_Review, Borrow
 import os
 from dotenv import load_dotenv
+from mangum import Mangum
 
 load_dotenv()
 
 app = FastAPI()
+
+handler = Mangum(app)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -17,6 +20,7 @@ async def lifespan(app: FastAPI):
     yield
 
 rds_postgres_url = os.getenv("AWS_POSTGRES_RDS_URL")
+
 
 # for SQLite connection and testing
 # sqlite_file_name = "database.db"

@@ -7,12 +7,21 @@ from models import User, Book, Book_Review, User_Review, Borrow
 import os
 from dotenv import load_dotenv
 from mangum import Mangum
+from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
 
 app = FastAPI()
 
 handler = Mangum(app)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -40,6 +49,10 @@ def get_session():
 
 SessionDep = Annotated[Session, Depends(get_session)]
 
+@app.get("/api/test")
+def get_test(session: SessionDep):
+    return {"message": "test successful"}
+
 @app.post("/api/users")
 def add_user(user: User, session: SessionDep) -> User:
     session.add(user)
@@ -48,7 +61,7 @@ def add_user(user: User, session: SessionDep) -> User:
     return user
 
 @app.get("/api/users")
-def get_users(session: SessionDep) -> List[User]:
+def get_users(session: SessionDep):
     all_users = session.exec(select(User)).all()
     return all_users
 

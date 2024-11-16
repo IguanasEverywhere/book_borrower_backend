@@ -8,6 +8,17 @@ provider:
   environment:
     DATABASE_URL: ${env:AWS_POSTGRES_RDS_URL}
 
+
+custom:
+  pythonRequirements:
+      useStaticCache: false
+      useDownloadCache: false
+      pipCmdExtraArgs:
+        - "--platform manylinux2014_x86_64"
+        - "--implementation cp"
+        - "--python-version 3.8"
+        - "--only-binary=:all:"
+
 functions:
   app:
     handler: main.handler
@@ -22,6 +33,7 @@ functions:
 plugins:
   - serverless-python-requirements
   - serverless-dotenv-plugin
+
 
 package:
   patterns:
